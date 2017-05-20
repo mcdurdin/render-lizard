@@ -8,12 +8,13 @@ Data files must at present be put into the filesystem; they cannot be uploaded b
 in the folder `data/1/`.
 
   * The file must be called tests.txt.
-  * Lines beginning with hash (#) are ignored.
+  * Lines beginning with hash (`#`) are ignored.
   * Blank lines are ignored (including whitespace)
   * All other lines are tests.
-  * "#" marks the start of a "note" and will be included.
+  * `#` on a test line marks the start of a "note" that will be
+    displayed in the notes column  
   * Any one-word notes will be applied as a class to the test row.
-  * The note "valid" has a CSS rule to make the row green.
+  * The note `valid` has a CSS rule to make the row green.
 
 Font suggestions can be specified for a test in the fonts.txt file. Each font
 name should be on a separate line.
