@@ -51,7 +51,7 @@ $(function() {
     // Render tests and existing results to grid
     //
 
-    var t = $('<table class="results"><thead><tr id="tr-head"><th>Test</th><th>Components</th><th>Notes</th></tr></thead><tbody></tbody></table>');
+    var t = $('<table class="results table table-bordered table-hover table-condensed"><thead><tr id="tr-head"><th>Test</th><th>Components</th><th>Notes</th></tr></thead><tbody></tbody></table>');
     var tb = $('tbody', t);
 
     var addHeaderCell = function(tr, resultId) {

@@ -1,19 +1,15 @@
 /* */
 
-#content table {
-    border-collapse: collapse;
-}
-
-#content table.results > tbody > tr > td,
-#content table.results > thead > tr > th {
-    border: solid 1px #cccccc;
-}
-
 td.metadata {
     width: 75px;
     white-space: pre-wrap;
     font-family: consolas;
     font-size: 8pt;
+}
+
+table.results td,
+table.results th {
+    vertical-align: middle !important;
 }
 
 table.unicode-components td {

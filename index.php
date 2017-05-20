@@ -30,6 +30,8 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Render Test</title>
         <link rel="stylesheet" type="text/css" href="render.css">
         <script>
@@ -56,19 +58,48 @@
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
         <script src="render.js"></script>
+
+        <!-- Bootstrap -->
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </head>
     <body>
+    <div class="container-fluid theme-showcase" role="main">
+
         <header>
-            ID: <input id="id" type="text" readonly value="<?=$id?>"><br>
-            Tests: <textarea id="tests" readonly><?=$tests_html?></textarea><br>
-            Font: <select id="fonts"><option value="default">Default</option><option value="custom">Custom</option></select> or custom font: <input id="font" type="text" value="Khmer OS">
-            Size: <input id="fontSize" type="text" value="30"> (pixels)
-            Line height: <input id="lineHeight" type="text" value="1.5">
-            <br>
-            <input id="render" type="button" value="Render">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="id">ID:</label>
+                    <input class="form-control" id="id" type="text" readonly value="<?=$id?>">
+                </div>
+                <div class="form-group">
+                    <label for=tests">Tests:</label>
+                    <textarea class="form-control" id="tests" readonly><?=$tests_html?></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="fonts">Font:</label>
+                    <select class="form-control" id="fonts">
+                        <option value="default">Default</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <label for="font">custom font:</label>
+                    <input class="form-control" id="font" type="text" value="Khmer OS">
+                    <label for="fontSize">Size:</label>
+                    <input class="form-control" id="fontSize" size="5" type="text" value="30"> (pixels)
+                    <label for="lineHeight">Line height:</label>
+                    <input class="form-control" id="lineHeight" size="5" type="text" value="1.5">
+                </div>
+                <input id="render" type="button" class="btn btn-large btn-default" value="Render">
+            </form>
         </header>
         <article id="content">
         </article>
-        <footer></footer>
+    </div>
     </body>
 </html>
