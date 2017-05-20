@@ -1,36 +1,119 @@
 $(function() {
-    // Each text should be added to the content grid
+    // Each test should be added to the content grid
     // For each result, render to the content grid
 
-    var t = $('<table><thead><tr id="tr-head"><th>Test</th><th>Unicode</th><th>Components</th><th>Notes</th></tr></thead><tbody></tbody></table>');
+    //
+    // Parse the test data
+    //
+
+    var testData = tests.filter(function(test) {
+        test = test.trim();
+        return test.length > 0 && test.charAt(0) != '#';
+    });
+
+    testData = testData.map(function(test) {
+        var data=test.split('#');
+        data.push('');
+        return {
+            text: data[0].trim(),
+            note: data[1].trim(),
+            unicodeComponents: function() {
+                var table = $('<table>').addClass('unicode-components');
+                var trChar = $('<tr>').addClass('char');
+                var trCode = $('<tr>').addClass('code');
+                table.append(trChar);
+                table.append(trCode);
+                for(var i = 0; i < this.text.length; i++) {
+                    // todo: handle surrogate pairs
+                    var s = 'U+'+this.text.charCodeAt(i);
+                    trChar.append($('<td>').text(this.text.charAt(i)));
+                    trCode.append($('<td>').text(s));
+                }
+                return table;
+            }
+        };
+    });
+
+    //
+    // Load fonts
+    //
+
+    if(fontDefinitionExists) {
+        $.ajax({url: "data/"+id+"/fonts.txt"}).done(function(data) {
+           data = data.split("\n");
+           data.forEach(function(fontName) {
+              $('#fonts').append($('<option>').text(fontName.trim()));
+           });
+        });
+    }
+
+    //
+    // Render tests and existing results to grid
+    //
+
+    var t = $('<table class="results"><thead><tr id="tr-head"><th>Test</th><th>Components</th><th>Notes</th></tr></thead><tbody></tbody></table>');
     var tb = $('tbody', t);
 
-    var tr = $('#tr-head', t);
+    var addHeaderCell = function(tr, resultId) {
+        tr.append(
+            $('<th>')
+                .addClass('result-' + resultId)
+                .text(resultId)
+        );
+    };
+
+    var addMetadataCell = function(tr, resultId, data) {
+        var td = $('<td>')
+            .addClass('metadata')
+            .addClass('result-'+resultId);
+        tr.append(td);
+
+        var formatMetadata = function(data) {
+            td.text(data.replace(/\n/g, "\n\n"));
+
+            var a = $('<a href="#">').text('Delete result').click(function() {
+                $.post('delete.php', {id: id, resultId: resultId}).done(function() {
+                    $(".result-"+resultId).fadeOut().remove();
+                });
+            });
+            td.append(a);
+        };
+
+        if(data) {
+            formatMetadata(data);
+        } else {
+            $.ajax({url: "data/"+id+"/"+resultId+"/metadata.txt"}).done(formatMetadata);
+        }
+    };
+
+    var addHeaderCells = function(resultId, data) {
+        addHeaderCell($('#tr-head'), resultId);
+        addMetadataCell($('#tr-metadata'), resultId, data);
+    };
+
+    var addTestResultCell = function(tr, y, resultId) {
+        var td = $('<td>').addClass('result').addClass('result-'+resultId);
+        td.append($("<img src='data/"+id+"/"+resultId+"/test-"+y+".png'>"));
+        tr.append(td);
+    };
+
+    var trHead = $('#tr-head', t);
+    var trMetadata = $('<tr id="tr-metadata"><td colspan="3">Test Parameters</td></tr>');
+    tb.append(trMetadata);
+
     for(var i = 0; i < results.length; i++) {
-        tr.append('<th>'+results[i]+'</th>');
+        addHeaderCell(trHead, results[i]);
+        addMetadataCell(trMetadata, results[i]);
     }
 
-    var tr = $('<tr id="tr-metadata"><td colspan="4">Test Parameters</td></tr>');
-    for(var i = 0; i < results.length; i++) {
-        var td = $('<td class="metadata">'); tr.append(td);
-        (function(td) {
-            $.ajax({url: "data/"+id+"/"+results[i]+"/metadata.txt"}).done(function(data) {
-                td.text(data.replace(/\n/g, "\n\n"));
-            });
-        })(td);
-    }
-    tb.append(tr);
-    for(var y = 0; y < tests.length; y++) {
+    for(var y = 0; y < testData.length; y++) {
         var tr = $('<tr id="tr-test-'+y+'">');
-        var td = $('<td>').text(tests[y]);
-        tr.append(td);
-        tr.append($('<td>'));
-        tr.append($('<td>'));
-        tr.append($('<td>'));
+        if(testData[y].note.match(/^[a-z-]+$/i)) tr.addClass('test-'+testData[y].note);
+        tr.append($('<td>').text(testData[y].text).addClass('text'));
+        tr.append($('<td>').append(testData[y].unicodeComponents()).addClass('unicode-components'));
+        tr.append($('<td>').text(testData[y].note).addClass('note'));
         for (var i = 0; i < results.length; i++) {
-            td = $('<td>');
-            td.append($("<img src='data/"+id+"/"+results[i]+"/test-"+y+".png'>"));
-            tr.append(td);
+            addTestResultCell(tr, y, results[i]);
         }
         tb.append(tr);
     }
@@ -76,6 +159,7 @@ $(function() {
         return result;
     };
 
+    // Horrible hacky metadata.
     var getBrowserInfo = function(font) {
       return "Date: "+(new Date).toISOString()+"\n"+
         "Font: "+font+"\n"+
@@ -84,34 +168,36 @@ $(function() {
 
     $('#render').click(function() {
         // Here's the meat. For each test we generate a canvas, write to the canvas, save to a .png, upload to a .php, then add an .img to point to the .php
-        // Fair chunk of work!
         var newId = findNewTestId();
 
         results.push(newId);
 
-        var fontName = $("#font").val();
+        var fontName = $('#fonts').val();
+        if(fontName === 'custom') {
+            fontName = $("#font").val();
+        } else if(fontName === 'default') {
+            fontName = 'sans-serif'; // per spec, default font name
+        }
         var fontSize = parseInt($("#fontSize").val());
         var lineHeight = parseFloat($("#lineHeight").val());
-
-        // Append the test number
-
-        var tr = $('#tr-head');
-        tr.append('<th>'+newId+'</th>');
-
-        // Append the test details
-
-        var tr = $('#tr-metadata');
         var metadata = getBrowserInfo(fontName);
-        tr.append('<td class="metadata">'+metadata.replace(/\n/g, "\n\n")+'</td>');
 
-        // todo: save the metadata
+        // Append the test number and metadata
+        addHeaderCells(newId, metadata);
 
+        // Save the metadata
         $.post('save-metadata.php', {id:id, resultId: newId, metadata: metadata});
 
-        for(var i = 0; i < tests.length; i++) {
+        // Render the text with the font parameters specified
+        for(var i = 0; i < testData.length; i++) {
             var tr = $('#tr-test-'+i);
-            var td = $('<td>');
+            var td = $('<td>')
+                .addClass('result')
+                .addClass('result-'+newId);
             (function(td, i) {
+
+                // Render the text to a canvas
+
                 var c = $('<canvas width="1000" height="30">')[0];
                 td.append(c);
                 td.append('...');
@@ -120,13 +206,15 @@ $(function() {
                 var ctx = c.getContext('2d');
                 ctx.textBaseline = 'top';
                 ctx.font = fontSize+"px '"+fontName+"'";
-                var metrics = ctx.measureText(tests[i]);
+                var metrics = ctx.measureText(testData[i].text);
                 c.width = metrics.width;
                 var my = getTextHeight(fontName, fontSize);
                 c.height = my.height * lineHeight;
                 ctx.textBaseline = 'top';
                 ctx.font = fontSize+"px '"+fontName+"'";
-                ctx.fillText(tests[i], 0, (my.height * lineHeight - my.height)/2);
+                ctx.fillText(testData[i].text, 0, (my.height * lineHeight - my.height)/2);
+
+                // Save the canvas to the server and when complete, reload with the image (discarding the canvas)
 
                 $.post("save.php", { id: id, testId: i, resultId: newId, data: c.toDataURL("image/png") }).done(function() {
                     // Replace the element with an image

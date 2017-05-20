@@ -4,8 +4,8 @@
     border-collapse: collapse;
 }
 
-#content td,
-#content th {
+#content table.results > tbody > tr > td,
+#content table.results > thead > tr > th {
     border: solid 1px #cccccc;
 }
 
@@ -14,4 +14,36 @@ td.metadata {
     white-space: pre-wrap;
     font-family: consolas;
     font-size: 8pt;
+}
+
+table.unicode-components td {
+    border: solid 1px black;
+}
+
+table.unicode-components tr.char td {
+    font-size: 16px;
+    text-align: center;
+    padding: 6px;
+}
+
+table.unicode-components tr.code td {
+    font-size: 8pt;
+    font-family: Consolas;
+    text-align: center;
+}
+
+td.unicode-components {
+    padding: 8px;
+}
+
+td.text {
+    text-align: center;
+}
+
+td.result {
+    text-align: center;
+}
+
+.test-valid {
+    background-color: lightgreen;
 }
