@@ -1,0 +1,13 @@
+data:
+    image: silintl/data-volume:latest
+    container_name: data
+    volumes:
+      - .:/data
+
+web:
+    build: .
+    container_name: web
+    volumes_from:
+      - data
+    ports:
+      - "80:80"
