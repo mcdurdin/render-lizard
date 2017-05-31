@@ -21,9 +21,13 @@ name should be on a separate line.
 
 Each test should be a in a folder in the data folder. Folders names must be integer values at present.
 
+### Web Server Setup ###
+
 The site should be setup on a web server with PHP, with write access to the
 data folder (the details of this are left to you). It does not have to be a 
 top-level folder.
+
+See pull request #3 for details on how to run this on Docker.
 
 ## Accessing the site ##
 
