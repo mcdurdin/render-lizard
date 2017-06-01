@@ -1,6 +1,11 @@
-Test platform to rapidly generate snapshots of render data for font validation
+# Render Lizard #
+A test platform to rapidly generate snapshots of render data for font validation
 
-Very early 1 hour hack prerelease. I'm sure there are security holes so don't put this on a live server.
+*Security Warning*: Render Lizard has known security limitations. The `save.php` and `save-metadata.php` scripts could be
+misused to put arbitrary files into the `data` folder on your web server. Any site visitor could create or delete
+results. Consider yourself warned.
+
+![Sample image](sample.jpg)
 
 ## Setup ##
 
@@ -27,7 +32,22 @@ The site should be setup on a web server with PHP, with write access to the
 data folder (the details of this are left to you). It does not have to be a 
 top-level folder.
 
-See pull request #3 for details on how to run this on Docker.
+### Running with Docker ###
+
+Instead of setting up a web server, you can also run the site in Docker.
+
+* Install docker (on Linux, Windows, and Mac) - https://docker.com/
+
+* To Start: in terminal, run
+  `docker-compose build`
+  `docker-compose up -d`
+
+* To Use: in browser, go to
+  http://localhost/index.php?id=1
+
+* To Stop: in terminal, run
+  `docker-compose stop`
+  `docker-compose rm -f`
 
 ## Accessing the site ##
 
