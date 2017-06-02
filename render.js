@@ -10,6 +10,15 @@ $(function() {
         test = test.trim();
         return test.length > 0 && test.charAt(0) != '#';
     });
+    
+    var intToHex = function(d,len) {
+      len = len || 4;
+      var s = d.toString(16);
+      while(s.length < len) {
+        s = '0' + s;
+      }
+      return s;
+    };
 
     testData = testData.map(function(test) {
         var data=test.split('#');
@@ -25,7 +34,7 @@ $(function() {
                 table.append(trCode);
                 for(var i = 0; i < this.text.length; i++) {
                     // todo: handle surrogate pairs
-                    var s = 'U+'+this.text.charCodeAt(i);
+                    var s = 'U+'+intToHex(this.text.charCodeAt(i));
                     trChar.append($('<td>').text(this.text.charAt(i)));
                     trCode.append($('<td>').text(s));
                 }
