@@ -7,6 +7,10 @@ results. Consider yourself warned.
 
 ![Sample image](sample.jpg)
 
+## Similar Tools ##
+
+**New 2020-08-19:** See Lindenberg Software's [ImageCollector](https://bitbucket.org/LindenbergSW/imagecollector/src/master/) for a more polished solution inspired by Render Lizard.
+
 ## Setup ##
 
 Data files must at present be put into the filesystem; they cannot be uploaded by the site. Data files are a simple text file format. See the sample data file
