@@ -1,5 +1,6 @@
+khmer_busra_osk.ttf,Khmer Busra OSK
+KhmerUI.ttf,Khmer UI
 DaunPenh
-Khmer Busra
 Khmer Mondulkiri
 Khmer OS
 Khmer OS Bassac
@@ -16,6 +17,5 @@ Khmer OS Moul
 Khmer OS Moulpali
 Khmer OS New
 Khmer OS Siemreap
-Khmer UI
 Leelawadee UI
 MoolBoran

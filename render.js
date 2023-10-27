@@ -10,7 +10,7 @@ $(function() {
         test = test.trim();
         return test.length > 0 && test.charAt(0) != '#';
     });
-    
+
     var intToHex = function(d,len) {
       len = len || 4;
       var s = d.toString(16);
@@ -51,7 +51,9 @@ $(function() {
         $.ajax({url: "data/"+id+"/fonts.txt"}).done(function(data) {
            data = data.split("\n");
            data.forEach(function(fontName) {
-              $('#fonts').append($('<option>').text(fontName.trim()));
+              let fontData = fontName.split(',');
+              if(fontData.length < 2) return;
+              $('#fonts').append($(`<option value="${fontData[0]}">`).text(fontData[1].trim()));
            });
         });
     }
@@ -175,21 +177,26 @@ $(function() {
         "Browser: "+navigator.userAgent+"\n";
     };
 
-    $('#render').click(function() {
+    $('#render').click(async function() {
         // Here's the meat. For each test we generate a canvas, write to the canvas, save to a .png, upload to a .php, then add an .img to point to the .php
         var newId = findNewTestId();
 
         results.push(newId);
 
-        var fontName = $('#fonts').val();
-        if(fontName === 'custom') {
-            fontName = $("#font").val();
-        } else if(fontName === 'default') {
+        var fontFilename = $('#fonts').val();
+        var fontFacename = $('#fonts option:selected').text().trim();
+        var fontName = '';
+        if(fontFacename === 'default') {
             fontName = 'sans-serif'; // per spec, default font name
+        } else {
+            fontName = 'test'+newId;
+            let font = new FontFace(fontName, 'url("data/'+id+'/'+fontFilename+'")');
+            await font.load();
+            document.fonts.add(font);
         }
         var fontSize = parseInt($("#fontSize").val());
         var lineHeight = parseFloat($("#lineHeight").val());
-        var metadata = getBrowserInfo(fontName);
+        var metadata = getBrowserInfo(fontFacename);
 
         // Append the test number and metadata
         addHeaderCells(newId, metadata);
@@ -214,13 +221,13 @@ $(function() {
 
                 var ctx = c.getContext('2d');
                 ctx.textBaseline = 'top';
-                ctx.font = fontSize+"px '"+fontName+"'";
+                ctx.font = fontSize+"px "+fontName;
                 var metrics = ctx.measureText(testData[i].text);
                 c.width = metrics.width;
                 var my = getTextHeight(fontName, fontSize);
                 c.height = my.height * lineHeight;
                 ctx.textBaseline = 'top';
-                ctx.font = fontSize+"px '"+fontName+"'";
+                ctx.font = fontSize+"px "+fontName;
                 ctx.fillText(testData[i].text, 0, (my.height * lineHeight - my.height)/2);
 
                 // Save the canvas to the server and when complete, reload with the image (discarding the canvas)

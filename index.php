@@ -86,10 +86,7 @@
                     <label for="fonts">Font:</label>
                     <select class="form-control" id="fonts">
                         <option value="default">Default</option>
-                        <option value="custom">Custom</option>
                     </select>
-                    <label for="font">custom font:</label>
-                    <input class="form-control" id="font" type="text" value="Khmer OS">
                     <label for="fontSize">Size:</label>
                     <input class="form-control" id="fontSize" size="5" type="text" value="30"> (pixels)
                     <label for="lineHeight">Line height:</label>
